@@ -37,7 +37,7 @@ namespace SPR
         /// <summary>
         /// You can get or set a dummy data
         /// </summary>
-        public UInt32[]? DummyDatas { get; set; }
+        public UInt32[]? DummyData { get; set; }
         /// <summary>
         /// You can get or set a offset
         /// </summary>
@@ -61,7 +61,7 @@ namespace SPR
         /// <summary>
         /// You can get or set a dummy data
         /// </summary>
-        public UInt32[]? DummyDatas2 { get; set; }
+        public UInt32[]? DummyData2 { get; set; }
         /// <summary>
         /// You can get or set a pixel data
         /// </summary>
@@ -77,13 +77,13 @@ namespace SPR
             FrameWidth = 0;
             FrameHeight = 0;
             NumberOfFrame = 0;
-            DummyDatas = null;
+            DummyData = null;
             Offsets = null;
             LastOffset = 0;
             CompressionSizes = null;
             SpriteWidth = 0;
             SpriteHeight = 0;
-            DummyDatas2 = null;
+            DummyData2 = null;
             Pixels = null;
         }
 
@@ -121,10 +121,10 @@ namespace SPR
                     // Number Of Frame
                     NumberOfFrame = br.ReadUInt32();
 
-                    // Dummy Datas
+                    // Dummy Data
                     // I think it's ok to pass it.
-                    DummyDatas = DummyDatas ?? new UInt32[SIZE];
-                    for (var i = 0; i < SIZE; ++i) { DummyDatas[i] = br.ReadUInt32(); }
+                    DummyData = DummyData ?? new UInt32[SIZE];
+                    for (var i = 0; i < SIZE; ++i) { DummyData[i] = br.ReadUInt32(); }
 
                     // Offsets
                     Offsets = Offsets ?? new UInt32[SIZE];
@@ -142,8 +142,8 @@ namespace SPR
                     SpriteHeight = br.ReadUInt32();
 
                     // Dummy Datas 2
-                    DummyDatas2 = DummyDatas2 ?? new UInt32[SIZE2];
-                    for (var i = 0; i < SIZE2; ++i) { DummyDatas2[i] = br.ReadUInt32(); }
+                    DummyData2 = DummyData2 ?? new UInt32[SIZE2];
+                    for (var i = 0; i < SIZE2; ++i) { DummyData2[i] = br.ReadUInt32(); }
 
                     // Pixels
                     Pixels?.Clear();
@@ -185,9 +185,9 @@ namespace SPR
                     // Number Of Frame
                     bw.Write(NumberOfFrame);
 
-                    // Dummy Datas
-                    if (DummyDatas == null) { throw new NullReferenceException(); }
-                    Array.ForEach(DummyDatas, bw.Write);
+                    // Dummy Data
+                    if (DummyData == null) { throw new NullReferenceException(); }
+                    Array.ForEach(DummyData, bw.Write);
 
                     // Offsets, Compression Sizes, Pixels
                     if (Pixels == null) { throw new NullReferenceException(); }
@@ -254,9 +254,9 @@ namespace SPR
                     bw.Write(SpriteWidth);
                     bw.Write(SpriteHeight);
 
-                    // Dummy Datas 2
-                    if (DummyDatas2 == null) { throw new NullReferenceException(); }
-                    Array.ForEach(DummyDatas2, bw.Write);
+                    // Dummy Data 2
+                    if (DummyData2 == null) { throw new NullReferenceException(); }
+                    Array.ForEach(DummyData2, bw.Write);
 
                     // Pixels
                     Result.ForEach(item => bw.Write(item));
