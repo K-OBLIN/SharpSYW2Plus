@@ -26,11 +26,11 @@ RESULT : `9`
 |`UInt32`|FrameWidth|The frame width|
 |`UInt32`|FrameHeight|The frame height|
 |`UInt32`|NumberOfFrame|The number of frame|
-|`UInt32[]`|DummyDatas|Guessing with dummy data|
+|`UInt32[]`|DummyData|Guessing with dummy data|
 |`UInt32[]`|Offsets|The offset datas|
 |`UInt32`|LastOffset|The last offset|
 |`UInt16[]`|CompressionSizes|Guessing with compression size|
 |`UInt32`|SpriteWidth|The sprite width|
 |`UInt32`|SpriteHeight|The sprite height|
-|`UInt32[]`|DymmyDatas2|Guessing with dummy data|
+|`UInt32[]`|DymmyData2|Guessing with dummy data|
 |`List<byte>`|Pixels|The pixel data|
