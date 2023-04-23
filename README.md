@@ -32,4 +32,5 @@ RESULT : `9`
 |`UInt16[]`|CompressionSizes|Guessing with compression size|
 |`UInt32`|SpriteWidth|The sprite width|
 |`UInt32`|SpriteHeight|The sprite height|
+|`UInt32[]`|DymmyDatas2|Guessing with dummy data|
 |`List<byte>`|Pixels|The pixel data|
