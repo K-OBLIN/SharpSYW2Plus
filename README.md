@@ -11,7 +11,7 @@ namespace SPR {
         {
             SPRManager spr = new SPRManager("test.spr");
 
-            // spr.SaveFile("test2.spr");
+            // spr.SaveSPRFile("test2.spr");
             System.Console.WriteLine(spr.Signature);
         }
     }
