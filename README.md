@@ -3,7 +3,7 @@ Load and Save the SPR file. Only SYW2+(임진록) game.
 
 ## 🤔 How to use?!
 ```csharp
-using SPR; // include this
+using SYW2Plus; // include this
 
 namespace SPR {
     class Program {
