@@ -1,9 +1,13 @@
 using System;
+using System.Drawing;
+using System.Drawing.Imaging;
 
-namespace SPR
-{
+/// <summary>
+/// 임진록 2+ 네임스페이스
+/// </summary>
+namespace SYW2Plus {
     /// <summary>
-    /// The SPR file management class
+    /// SPR 관리 클래스
     /// </summary>
     class SPRManager {
         #region Constants
@@ -14,58 +18,58 @@ namespace SPR
         /// <summary>
         /// Array Size 2
         /// </summary>
-        public const UInt32 SIZE2 = 8;            
+        public const UInt32 SIZE2 = 8;
         #endregion
 
         #region Properties
         /// <summary>
-        /// You can get or set a signature
+        /// You can get the signature
         /// </summary>
-        public UInt32 Signature { get; set; }
+        public UInt32 Signature             { get; private set; }
         /// <summary>
-        /// You can get or set a frame width
+        /// You can get the frame width
         /// </summary>
-        public UInt32 FrameWidth { get; set; }
+        public UInt32 FrameWidth            { get; private set; }
         /// <summary>
-        /// You can get or set a frame height
+        /// You can get the frame height
         /// </summary>
-        public UInt32 FrameHeight { get; set; }
+        public UInt32 FrameHeight           { get; private set; }
         /// <summary>
-        /// You can get or set a number of frame
+        /// You can get the number of frame
         /// </summary>
-        public UInt32 NumberOfFrame { get; set; }
+        public UInt32 NumberOfFrame         { get; private set; }
         /// <summary>
-        /// You can get or set a dummy data
+        /// You can get the dummy data
         /// </summary>
-        public UInt32[]? DummyData { get; set; }
+        public UInt32[] DummyData           { get; private set; }
         /// <summary>
-        /// You can get or set a offset
+        /// You can get the offset
         /// </summary>
-        public UInt32[]? Offsets { get; set; }
+        public UInt32[] Offsets             { get; private set; }
         /// <summary>
-        /// You can get or set a last offset
+        /// You can get the last offset
         /// </summary>
-        public UInt32 LastOffset { get; set; }
+        public UInt32 LastOffset            { get; private set; }
         /// <summary>
-        /// You can get or set a compression size
+        /// You can get the compression size
         /// </summary>
-        public UInt16[]? CompressionSizes { get; set; }
+        public UInt16[] CompressionSizes    { get; private set; }
         /// <summary>
-        /// You can get or set a sprite width
+        /// You can get the sprite width
         /// </summary>
-        public UInt32 SpriteWidth { get; set; }
+        public UInt32 SpriteWidth           { get; private set; }
         /// <summary>
-        /// You can get or set a sprite height
+        /// You can get the sprite height
         /// </summary>
-        public UInt32 SpriteHeight { get; set; }
+        public UInt32 SpriteHeight          { get; private set; }
         /// <summary>
-        /// You can get or set a dummy data
+        /// You can get the dummy data 2
         /// </summary>
-        public UInt32[]? DummyData2 { get; set; }
+        public UInt32[] DummyData2          { get; private set; }
         /// <summary>
-        /// You can get or set a pixel data
+        /// You can get the pixel
         /// </summary>
-        public byte[]? Pixels { get; set; }
+        public byte[]? Pixels                { get; private set; }
         #endregion
 
         #region Constructors
@@ -77,34 +81,47 @@ namespace SPR
             FrameWidth = 0;
             FrameHeight = 0;
             NumberOfFrame = 0;
-            DummyData = null;
-            Offsets = null;
+            DummyData = new UInt32[SIZE];
+            Offsets = new UInt32[SIZE];
             LastOffset = 0;
-            CompressionSizes = null;
+            CompressionSizes = new UInt16[SIZE];
             SpriteWidth = 0;
             SpriteHeight = 0;
-            DummyData2 = null;
+            DummyData2 = new UInt32[SIZE2];
             Pixels = null;
         }
 
         /// <summary>
-        /// Contructor
+        /// Constructor
         /// </summary>
-        /// <param name="file_path">The path to the SPR file</param>
+        /// <param name="file_path">The path to the spr file</param>
         public SPRManager(string file_path) {
-            if (LoadFile(file_path) == false) {
-                throw new FileLoadException("Failed to load SPR file.");
+            Signature = 0;
+            FrameWidth = 0;
+            FrameHeight = 0;
+            NumberOfFrame = 0;
+            DummyData = new UInt32[SIZE];
+            Offsets = new UInt32[SIZE];
+            LastOffset = 0;
+            CompressionSizes = new UInt16[SIZE];
+            SpriteWidth = 0;
+            SpriteHeight = 0;
+            DummyData2 = new UInt32[SIZE2];
+            Pixels = null;
+
+            if (LoadSPRFile(file_path) == false) {
+                throw new FileLoadException("Failed to load the spr file!");
             }
         }
         #endregion
 
         #region Public Methods
         /// <summary>
-        /// Load the SPR file
+        /// Load the spr file
         /// </summary>
-        /// <param name="file_path">The path to the SPR file</param>
+        /// <param name="file_path">The path to the spr file</param>
         /// <returns>Successful(true), Failed(false)</returns>
-        public bool LoadFile(string file_path) {
+        public bool LoadSPRFile(string file_path) {
             if (string.IsNullOrEmpty(file_path) == true) { return false; }
             if (File.Exists(file_path) == false) { return false; }
 
@@ -123,41 +140,37 @@ namespace SPR
 
                     // Dummy Data
                     // I think it's ok to pass it.
-                    DummyData = DummyData ?? new UInt32[SIZE];
-                    for (var i = 0; i < SIZE; ++i) { DummyData[i] = br.ReadUInt32(); }
+                    Array.ForEach(DummyData, data => data = br.ReadUInt32());
 
                     // Offsets
-                    Offsets = Offsets ?? new UInt32[SIZE];
-                    for (var i = 0; i < SIZE; ++i) { Offsets[i] = br.ReadUInt32(); }
+                    Array.ForEach(Offsets, offset => offset = br.ReadUInt32());
 
                     // Compression Sizes
-                    CompressionSizes = CompressionSizes ?? new UInt16[SIZE];
-                    for (var i = 0; i < SIZE; ++i) { CompressionSizes[i] = br.ReadUInt16(); }
+                    Array.ForEach(CompressionSizes, size => size = br.ReadUInt16());
 
                     // Last Offset
                     LastOffset = br.ReadUInt32();
 
-                    // Sprtie Width, Height
+                    // Sprite Width, Height
                     SpriteWidth = br.ReadUInt32();
                     SpriteHeight = br.ReadUInt32();
 
-                    // Dummy Datas 2
-                    DummyData2 = DummyData2 ?? new UInt32[SIZE2];
-                    for (var i = 0; i < SIZE2; ++i) { DummyData2[i] = br.ReadUInt32(); }
+                    // Dummy Data 2
+                    Array.ForEach(DummyData2, data => data = br.ReadUInt32());
 
                     // Pixels
-                    Pixels = Pixels ?? new byte[FrameWidth * FrameHeight * NumberOfFrame];
+                    Pixels = new byte[FrameWidth * FrameHeight * NumberOfFrame]; // new byte[SpriteWidth * SpriteHeight];
                     for (var i = 0; i < Pixels.Length;) {
                         var data = br.ReadByte();
 
                         if (data == 0xFE) {
                             var NumberOfRepeat = br.ReadByte();
-                            for (var j = 0; j < NumberOfRepeat; ++j) { Pixels[i + j] = data; } 
+                            for (var j = 0; j < NumberOfRepeat; ++j) { Pixels[i + j] = data; }
 
-                            i += (NumberOfRepeat);
+                            i += NumberOfRepeat;
                         } else {
                             Pixels[i] = data;
-                             ++i;
+                            ++i;
                         }
                     }
                 }
@@ -167,17 +180,18 @@ namespace SPR
         }
 
         /// <summary>
-        /// Save the SPR file
+        /// Save the spr file
         /// </summary>
-        /// <param name="file_path">The path to the SPR file</param>
+        /// <param name="file_path">The path to the spr file</param>
         /// <returns>Successful(true), Failed(false)</returns>
-        public bool SaveFile(string file_path) {
+        public bool SaveSPRFile(string file_path) {
             if (string.IsNullOrEmpty(file_path) == true) { return false; }
+            if (Pixels == null) { return false; }
 
             using (var fs = new FileStream(file_path, FileMode.Create, FileAccess.Write)) {
                 using (var bw = new BinaryWriter(fs)) {
                     // Signature
-                    bw.Write(Signature);
+                    bw.Write((UInt32)0x09);
 
                     // Frame Width, Height
                     bw.Write(FrameWidth);
@@ -187,14 +201,13 @@ namespace SPR
                     bw.Write(NumberOfFrame);
 
                     // Dummy Data
-                    if (DummyData == null) { throw new NullReferenceException(); }
                     Array.ForEach(DummyData, bw.Write);
 
                     // Offsets, Compression Sizes, Pixels
-                    if (Pixels == null) { throw new NullReferenceException(); }
                     UInt32 Offset = 0, Size = 0;
-                    List<byte> Result = new List<byte>();
-                    List<byte> Temp = new List<byte>();
+                    var Result = new List<byte>();
+                    var Temp = new byte[FrameWidth];
+
                     for (var i = 0; i < Pixels.Length; ++i) {
                         var idx = ((i + 1) / (FrameWidth * FrameHeight)) - 1;
 
@@ -204,17 +217,17 @@ namespace SPR
                             bw.Write(Offset);
                         }
 
-                        Temp.Add(Pixels[i]);
+                        Temp[i % FrameWidth] = Pixels[i];
 
                         if ((i + 1) % FrameWidth == 0) {
-                            for (var j = 0; j < Temp.Count; ++j) {
+                            for (var j = 0; j < Temp.Length; ++j) {
                                 var item = Temp[j];
 
                                 if (item == 0xFE) {
                                     var NumberOfRepeat = 1;
-
                                     var NextItemIdx = j + 1;
-                                    while (NextItemIdx < Temp.Count && Temp[NextItemIdx] == 0xFE) {
+
+                                    while (NextItemIdx < Temp.Length && Temp[NextItemIdx] == 0xFE) {
                                         NumberOfRepeat += 1;
                                         NextItemIdx += 1;
                                     }
@@ -223,7 +236,7 @@ namespace SPR
                                     Result.Add((byte)NumberOfRepeat);
 
                                     item = Temp[NextItemIdx - 1];
-                                    
+
                                     Size += 2;
                                     j = NextItemIdx - 1;
                                 } else {
@@ -240,8 +253,6 @@ namespace SPR
 
                                 Size = 0;
                             }
-
-                            Temp.Clear();
                         }
                     }
 
@@ -254,15 +265,119 @@ namespace SPR
                     bw.Write(SpriteHeight);
 
                     // Dummy Data 2
-                    if (DummyData2 == null) { throw new NullReferenceException(); }
                     Array.ForEach(DummyData2, bw.Write);
 
                     // Pixels
-                    Result.ForEach(item => bw.Write(item));
+                    Result.ForEach(pixel => bw.Write(pixel));
                 }
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Save the bmp file
+        /// </summary>
+        /// <param name="file_path">The path to the bmp file</param>
+        /// <param name="palette">Color Palette</param>
+        /// <returns>Successful(true), Failed(false)</returns>
+        public bool SaveBMPFile(string file_path, ColorPalette palette) {
+            if (string.IsNullOrEmpty(file_path) == true) { return false; }
+            if (Pixels == null) { return false; }
+
+            Bitmap bitmap = new Bitmap((Int32)SpriteWidth, (Int32)SpriteHeight, PixelFormat.Format8bppIndexed);
+            bitmap.Palette = palette;
+
+            var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+            unsafe {
+                var ptr = (byte*)data.Scan0;
+                var stride = data.Stride;
+
+                for (var j = 0; j < SpriteHeight / FrameHeight; ++j) {
+                    for (var y = 0; y < FrameHeight; ++y) {
+                        for (var i = 0; i < SpriteWidth / FrameWidth; ++i) {
+                            for (var x = 0; x < FrameWidth; ++x) {
+                                ptr[x + (y * stride) + (i * FrameWidth) + (j * FrameWidth * FrameHeight * (SpriteWidth / FrameWidth))] = Pixels[x + (y * (Int32)FrameWidth) + (i * (Int32)FrameWidth * (Int32)FrameHeight) + (j * (Int32)FrameWidth * (Int32)FrameHeight * ((Int32)SpriteWidth / (Int32)FrameWidth))];
+                            }
+                        }
+                    }
+                }
+            }
+            bitmap.UnlockBits(data);
+            bitmap.Save(file_path);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Get the spr file as a bitmap
+        /// </summary>
+        /// <param name="palette">Color Palette</param>
+        /// <returns>Bitmap(true), null(false)</returns>
+        public Bitmap? GetBitmap(ColorPalette palette) {
+            if (Pixels == null) { return null; }
+
+            Bitmap? bitmap = new Bitmap((Int32)SpriteWidth, (Int32)SpriteHeight, PixelFormat.Format8bppIndexed);
+            bitmap.Palette = palette;
+
+            var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+            unsafe {
+                var ptr = (byte*)data.Scan0;
+                var stride = data.Stride;
+
+                for (var j = 0; j < SpriteHeight / FrameHeight; ++j) {
+                    for (var y = 0; y < FrameHeight; ++y) {
+                        for (var i = 0; i < SpriteWidth / FrameWidth; ++i) {
+                            for (var x = 0; x < FrameWidth; ++x) {
+                                ptr[x + (y * stride) + (i * FrameWidth) + (j * FrameWidth * FrameHeight * (SpriteWidth / FrameWidth))] = Pixels[x + (y * (Int32)FrameWidth) + (i * (Int32)FrameWidth * (Int32)FrameHeight) + (j * (Int32)FrameWidth * (Int32)FrameHeight * ((Int32)SpriteWidth / (Int32)FrameWidth))];
+                            }
+                        }
+                    }
+                }
+            }
+            bitmap.UnlockBits(data);
+
+            return bitmap;
+        }
+
+        /// <summary>
+        /// Convert bmp file to spr file
+        /// </summary>
+        /// <param name="file_path">The path to the spr file</param>
+        /// <param name="bmp">The Bitmap image</param>
+        /// <param name="frame_width">The frame width</param>
+        /// <param name="frame_height">The frame height</param>
+        /// <param name="number_of_frame">The number of frame</param>
+        /// <returns>Successful(true), Failed(false)</returns>
+        public bool BitmapToSPR(string file_path, Bitmap? bmp, UInt32 frame_width, UInt32 frame_height, UInt32 number_of_frame) {
+            if (string.IsNullOrEmpty(file_path) == true) { return false; }
+            if (bmp == null) { return false; }
+
+            FrameWidth = frame_width;
+            FrameHeight = frame_height;
+            NumberOfFrame = number_of_frame;
+            SpriteWidth = (UInt32)bmp.Width;
+            SpriteHeight = (UInt32)bmp.Height;
+            Pixels = new byte[FrameWidth * FrameHeight * NumberOfFrame];
+
+            var data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
+            unsafe {
+                var ptr = (byte*)data.Scan0;
+                var stride = data.Stride;
+
+                for (var j = 0; j < SpriteHeight / FrameHeight; ++j) {
+                    for (var y = 0; y < FrameHeight; ++y) {
+                        for (var i = 0; i < SpriteWidth / FrameWidth; ++i) {
+                            for (var x = 0; x < FrameWidth; ++x) {
+                                Pixels[x + (y * (Int32)FrameWidth) + (i * (Int32)FrameWidth * (Int32)FrameHeight) + (j * (Int32)FrameWidth * (Int32)FrameHeight * ((Int32)SpriteWidth / (Int32)FrameWidth))] = ptr[x + (y * stride) + (i * FrameWidth) + (j * FrameWidth * FrameHeight * (SpriteWidth / FrameWidth))];
+                            }
+                        }
+                    }
+                }
+            }
+            bmp.UnlockBits(data);
+
+            return SaveSPRFile(file_path);
         }
         #endregion
     }
