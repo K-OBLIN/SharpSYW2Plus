@@ -65,7 +65,7 @@ namespace SPR
         /// <summary>
         /// You can get or set a pixel data
         /// </summary>
-        public List<byte>? Pixels { get; set; }
+        public byte[]? Pixels { get; set; }
         #endregion
 
         #region Constructors
@@ -146,17 +146,18 @@ namespace SPR
                     for (var i = 0; i < SIZE2; ++i) { DummyData2[i] = br.ReadUInt32(); }
 
                     // Pixels
-                    Pixels?.Clear();
-                    Pixels = Pixels ?? new List<byte>();
-                    while(true) {
-                        if (br.BaseStream.Position == br.BaseStream.Length) { break; }
+                    Pixels = Pixels ?? new byte[FrameWidth * FrameHeight * NumberOfFrame];
+                    for (var i = 0; i < Pixels.Length;) {
+                        var data = br.ReadByte();
 
-                        var b = br.ReadByte();
-                        if (b == 0xFE) {
+                        if (data == 0xFE) {
                             var NumberOfRepeat = br.ReadByte();
-                            for (var i = 0; i < NumberOfRepeat; ++i) { Pixels.Add(b); }
+                            for (var j = 0; j < NumberOfRepeat; ++j) { Pixels[i + j] = data; } 
+
+                            i += (NumberOfRepeat);
                         } else {
-                            Pixels.Add(b);
+                            Pixels[i] = data;
+                             ++i;
                         }
                     }
                 }
@@ -194,10 +195,11 @@ namespace SPR
                     UInt32 Offset = 0, Size = 0;
                     List<byte> Result = new List<byte>();
                     List<byte> Temp = new List<byte>();
-                    for (var i = 0; i < Pixels.Count; ++i) {
+                    for (var i = 0; i < Pixels.Length; ++i) {
+                        var idx = ((i + 1) / (FrameWidth * FrameHeight)) - 1;
+
                         // Offsets
                         if ((i + 1) % (FrameWidth * FrameHeight) == 0) {
-                            var idx = ((i + 1) / (FrameWidth * FrameHeight)) - 1;
                             bw.BaseStream.Position = 0x4C0 + (idx << 2);
                             bw.Write(Offset);
                         }
@@ -233,11 +235,8 @@ namespace SPR
                             if ((i + 1) % (FrameWidth * FrameHeight) == 0) {
                                 Offset += Size;
 
-                                var idx = ((i + 1) / (FrameWidth * FrameHeight)) - 1;
                                 bw.BaseStream.Position = 0x970 + (idx << 1);
-
-                                var compression_size = Size & 0xFF;
-                                bw.Write((UInt16)compression_size);
+                                bw.Write((UInt16)(Size & 0xFF));
 
                                 Size = 0;
                             }
