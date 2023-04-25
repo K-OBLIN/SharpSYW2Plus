@@ -1,5 +1,5 @@
 # SharpSPR
-Load and Save the SPR file. Only ESL(임진록) game.
+Load and Save the SPR file. Only SYW2+(임진록) game.
 
 ## 🤔 How to use?!
 ```csharp
@@ -33,4 +33,4 @@ RESULT : `9`
 |`UInt32`|SpriteWidth|The sprite width|
 |`UInt32`|SpriteHeight|The sprite height|
 |`UInt32[]`|DummyData2|Guessing with dummy data|
-|`List<byte>`|Pixels|The pixel data|
+|`byte[]?`|Pixels|The pixel data|
