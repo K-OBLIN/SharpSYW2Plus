@@ -34,3 +34,15 @@ RESULT : `9`
 |`UInt32`|SpriteHeight|The sprite height|
 |`UInt32[]`|DummyData2|Guessing with dummy data|
 |`byte[]?`|Pixels|The pixel data|
+
+## YAV file Structure
+|Data Type|Name|Desc|
+|-----|-----|-----|
+|`Int32`|Signature|The signature number|
+|`Int16`|AudioFormat|The audio's format|
+|`Int16`|AudioChannel|The number of channel|
+|`Int32`|SampleRate|Sample Rate|
+|`Int32`|AverageBytesPerSecond|Average Bytes Per Second|
+|`Int16`|BlockAlign|Block Align|
+|`Int16`|BitsPerSample|Bits Per Sample|
+|`List<Byte>?`|RawData|PCM Raw Data|
